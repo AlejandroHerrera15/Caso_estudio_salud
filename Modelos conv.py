@@ -76,7 +76,7 @@ hp = kt.HyperParameters()
 def build_model(hp):
     
     dropout_rate=hp.Float('DO', min_value=0.1, max_value= 0.5, step=0.05)
-    reg_strength = hp.Float("rs", min_value=0.0001, max_value=0.005, step=0.001)
+    reg_strength = hp.Float("rs", min_value=0.001, max_value=0.005, step=0.001)
     optimizer = hp.Choice('optimizer', ['adam', 'sgd', 'rmsprop']) ### en el contexto no se debería afinar
    
     ####hp.Int
@@ -106,7 +106,7 @@ def build_model(hp):
         opt = tf.keras.optimizers.RMSprop(learning_rate=0.001)
    
     model.compile(
-        optimizer=opt, loss="categorical_crossentropy", metrics=["recall"],
+        optimizer=opt, loss="binary_crossentropy", metrics=["recall"],
     )
     
     
@@ -119,17 +119,16 @@ def build_model(hp):
 tuner = kt.RandomSearch(
     hypermodel=build_model,
     hyperparameters=hp,
-    tune_new_entries=False, ## solo evalúe los hiperparámetros configurados
+    tune_new_entries=True, ## solo evalúe los hiperparámetros configurados
     objective=kt.Objective("val_recall", direction="max"),
-    max_trials=10,
-    overwrite=True,
-    directory="my_dir",
-    project_name="helloworld"
+    max_trials=3,
+    directory="tuner",
+    project_name="brain",
 )
 
 
 
-tuner.search(x_train, y_train, epochs=3, validation_data=(x_test, y_test), batch_size=100)
+tuner.search(x_train, y_train, epochs=10, validation_data=(x_test, y_test), batch_size=100)
 
 fc_best_model = tuner.get_best_models(num_models=1)[0]
 tuner.results_summary()
@@ -143,7 +142,5 @@ cnn_model.save('salidas\\cnn_model.h5')
 
 cargar_modelo=tf.keras.models.load_model('salidas\\cnn_model.h5')
 cargar_modelo.summary()
-
-
 
 
