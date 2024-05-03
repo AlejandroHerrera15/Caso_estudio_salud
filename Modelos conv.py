@@ -73,7 +73,6 @@ print(metrics.classification_report(y_test, pred_test))
 #Tunning
 ##### función con definicion de hiperparámetros a afinar
 hp = kt.HyperParameters()
-
 def build_model(hp):
     
     dropout_rate=hp.Float('DO', min_value=0.1, max_value= 0.5, step=0.05)
