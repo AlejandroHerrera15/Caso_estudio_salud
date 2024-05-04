@@ -93,7 +93,7 @@ def build_model(hp):
         tf.keras.layers.Flatten(),
         tf.keras.layers.Dense(64, activation='relu', kernel_regularizer=tf.keras.regularizers.l2(reg_strength)),
         tf.keras.layers.Dropout(dropout_rate),
-        tf.keras.layers.Dense(4, activation='softmax')
+        tf.keras.layers.Dense(1, activation='sigmoid')
     ])
     
   
@@ -142,5 +142,4 @@ cnn_model.save('salidas\\cnn_model.h5')
 
 cargar_modelo=tf.keras.models.load_model('salidas\\cnn_model.h5')
 cargar_modelo.summary()
-
 

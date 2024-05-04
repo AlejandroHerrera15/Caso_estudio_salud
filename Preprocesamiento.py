@@ -25,7 +25,7 @@ np.prod(img1_r.shape)
 ######## Código para cargar todas las imágenes #############
 ####### reducir su tamaño y convertir en array ################
 ################################################################
-width = 200 #tamaño para reescalar imágen
+width = 200#tamaño para reescalar imágen
 num_classes = 2 #clases variable respuesta
 trainpath = 'Data/Training/'
 testpath = 'Data/Testing/'
