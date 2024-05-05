@@ -63,12 +63,7 @@ print(metrics.classification_report(y_test, preddtctest))
 
 
 
-
-
-#Red neuronal 
-#y_train1=to_categorical(y_train)
-#y_test1=to_categorical(y_test)
-
+#Red neuronal simple
 rd_model=tf.keras.models.Sequential([
     tf.keras.layers.Flatten(input_shape=x_train.shape[1:]),
     tf.keras.layers.Dense(128, activation="relu"),

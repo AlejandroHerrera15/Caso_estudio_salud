@@ -16,7 +16,7 @@ img1.min() ### mínimo valor de intensidad en un pixel
 np.prod(img1.shape) ### 5 millones de observaciones cada imágen
 #### dado que se necesitarían muchas observaciones (imágenes para entrenar)
 #### un modelo con tantas observaciones y no tenemos, vamos a reescalar las imágenes
-img1_r = cv2.resize(img1 ,(120,120))
+img1_r = cv2.resize(img1 ,(150, 150))
 plt.imshow(img1_r)
 plt.title('no_tumor')
 plt.show()
@@ -25,7 +25,7 @@ np.prod(img1_r.shape)
 ######## Código para cargar todas las imágenes #############
 ####### reducir su tamaño y convertir en array ################
 ################################################################
-width = 200#tamaño para reescalar imágen
+width = 150#tamaño para reescalar imágen
 num_classes = 2 #clases variable respuesta
 trainpath = 'Data/Training/'
 testpath = 'Data/Testing/'
