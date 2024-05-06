@@ -19,12 +19,12 @@ x_test=x_test.astype('float32')
 x_train /=255 
 x_test /=255
 
-
+#Modelo con clases desbalanceadas con tunnig de 3 hyperparametros
 ##### cargar modelo  ######
 modelo=tf.keras.models.load_model('salidas\\fc_model.h5')
 #Distribucion de probabilidad de las predicciones del modelo
 probabilidades=modelo.predict(x_test)
-sns.histplot(probabilidades, legend=False)
+sns.histplot(probabilidades, legend=False, bins=15)
 pred_test=(probabilidades>0.85).astype('int')
 #pred_test=(modelo.predict(x_test)>=0.5080).astype('int')
 print(metrics.classification_report(y_test, pred_test))
@@ -32,14 +32,86 @@ cm=metrics.confusion_matrix(y_test,pred_test)
 disp=metrics.ConfusionMatrixDisplay(cm,display_labels=['normal', 'tumor'])
 disp.plot()
 
+
+
+
+
+
+
+#Modelo con clases desbalanceados con tunnig de 5 hyperparametros
 ##### cargar modelo 2 ######
 modelo2=tf.keras.models.load_model('salidas\\fc_modelres.h5')
 #Distribucion de probabilidad de las predicciones del modelo
 probabilidades2=modelo2.predict(x_test)
-sns.histplot(probabilidades2, bins=50,legend=False)
+sns.histplot(probabilidades2, bins=15,legend=False)
 pred_test2=(probabilidades2>0.50).astype('int')
 #pred_test=(modelo.predict(x_test)>=0.5080).astype('int')
 print(metrics.classification_report(y_test, pred_test2))
 cm=metrics.confusion_matrix(y_test,pred_test2)
 disp=metrics.ConfusionMatrixDisplay(cm,display_labels=['normal', 'tumor'])
+disp.plot()
+
+
+
+
+#Modelo con balanceo de clases con smote y tunnig de 5 hyperparametros
+##### cargar modelo 3 ######
+modelo3=tf.keras.models.load_model('salidas\\fc_model+.h5')
+#Distribucion de probabilidad de las predicciones del modelo
+probabilidades3=modelo3.predict(x_test)
+sns.histplot(probabilidades3,legend=False, bins=15)
+pred_test3=(probabilidades3>0.50).astype('int')
+#pred_test=(modelo.predict(x_test)>=0.5080).astype('int')
+print(metrics.classification_report(y_test, pred_test3))
+cm=metrics.confusion_matrix(y_test,pred_test3)
+disp=metrics.ConfusionMatrixDisplay(cm,display_labels=['normal', 'tumor'])
+disp.plot()
+
+
+
+#Para este modelo se reducio el numero de pixeles por imagen
+#ademas se buscaron mas imagenes en internet.
+
+##### cargar modelo 4 ######
+modelo4=tf.keras.models.load_model('salidas\\fc_model4.h5')
+#Distribucion de probabilidad de las predicciones del modelo
+probabilidades4=modelo4.predict(x_test)
+sns.histplot(probabilidades4, bins=15,legend=False)
+plt.show()
+pred_test4=(probabilidades4>0.50).astype('int')
+#pred_test=(modelo.predict(x_test)>=0.5080).astype('int')
+print(metrics.classification_report(y_test, pred_test4))
+cm=metrics.confusion_matrix(y_test,pred_test4, labels=[1,0])
+disp=metrics.ConfusionMatrixDisplay(cm,display_labels=['tumor', 'normal'])
+disp.plot()
+
+#Para entrenamiento
+probabilidades4t=modelo4.predict(x_train)
+sns.histplot(probabilidades4t, bins=15,legend=False)
+plt.show()
+
+#Se generan en la grafica dos grupos a partir de las predicciones
+#Se observara la matriz de confusion para ambos grupos con dos thresholds
+#El primer el threshold es 90% y el otro es 10%
+
+#Threshold
+sns.histplot(probabilidades4, bins=30,legend=False)
+plt.axvline(x=0.10, color='red', linestyle='--')
+plt.axvline(x=0.90, color='red', linestyle='--')
+plt.show()
+
+
+#Para el grupo 1
+pred_test4_1=(probabilidades4>0.10).astype('int')
+print(metrics.classification_report(y_test, pred_test4_1))
+cm=metrics.confusion_matrix(y_test,pred_test4_1, labels=[1,0])
+disp=metrics.ConfusionMatrixDisplay(cm,display_labels=['tumor', 'normal'])
+disp.plot()
+
+
+#Para el grupo 2
+pred_test4_2=(probabilidades4>0.90).astype('int')
+print(metrics.classification_report(y_test, pred_test4_2))
+cm=metrics.confusion_matrix(y_test,pred_test4_2, labels=[1,0])
+disp=metrics.ConfusionMatrixDisplay(cm,display_labels=['tumor', 'normal'])
 disp.plot()

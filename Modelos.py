@@ -75,16 +75,25 @@ rd_model=tf.keras.models.Sequential([
 rd_model.compile(optimizer="adam", loss='binary_crossentropy', metrics=["accuracy", "recall", "precision"])
 #Entrenamiento
 rd_model.fit(x_train, y_train, epochs=10, validation_data=(x_test, y_test))
+m1=rd_model.fit(x_train, y_train, epochs=10, validation_data=(x_test, y_test))
+m1
+plt.plot(m1.history['precision'])
+plt.plot(m1.history['val_precision'])
+plt.title('Precisión del modelo')
+plt.xlabel('Tiempo de entrenamiento - Epochs')
+plt.ylabel('Precisión')
+plt.legend(['train', 'val'])
+plt.show()
 
 #Evaluar el modelo
 test_loss, test_acc, test_recall, test_precision = rd_model.evaluate(x_test, y_test, verbose=2)
 print("Test recall:", test_recall)
-rd_model.predict(x_test)
 #Matriz de confusión
 #evaluar algun porcentaje como filtro____pred_test=(rd_model.predict(x_test) > 0.50 ).astype("int")
-pred_test=(rd_model.predict(x_test) > 0.20 ).astype("int")
+pred_test=(rd_model.predict(x_test) > 0.50 ).astype("int")
 #pred_test=rd_model.predict(x_test)
 #pred_test.shape #El modelo tiene una probabilidad mayor a 80% en todas las clases
+pred_testt=(rd_model.predict(x_train) > 0.50 ).astype("int")
 
 #pred_test1=np.argmax(pred_test, axis=1)
 #y_test2=np.argmax(y_test1, axis=1)
@@ -93,14 +102,12 @@ cm=metrics.confusion_matrix(y_test, pred_test)
 disp=metrics.ConfusionMatrixDisplay(cm,display_labels=['no_tumor', 'tumor'])
 disp.plot()
 print(metrics.classification_report(y_test, pred_test))
-
+print(metrics.classification_report(y_train, pred_testt))
 #Guardar modelo
 rd_model.save('path_to_my_model.h5') 
 
 #filtrar la probabilidad
 # unir a dos categorias
-
-
 
 
 
@@ -120,18 +127,17 @@ rd_model2=tf.keras.models.Sequential([
 rd_model2.compile(optimizer="adam", loss='binary_crossentropy', metrics=["accuracy", "recall", "precision"])
 #Entrenamiento
 rd_model2.fit(x_train, y_train, epochs=10, validation_data=(x_test, y_test))
+m2=rd_model2.fit(x_train, y_train, epochs=10, validation_data=(x_test, y_test))
 
 #Evaluar el modelo
 test_loss, test_acc, test_recall, test_precision = rd_model2.evaluate(x_test, y_test, verbose=2)
 print("Test recall:", test_recall)
 
-rd_model2.predict(x_test)
 #pred_test2=rd_model2.predict(x_test)
 ##IMPORTANTE SI TIRO EL TRESHOLD COMO HAGO PARA QUE EL
 #evaluar algun porcentaje como filtro____pred_test=(rd_model.predict(x_test) > 0.50 ).astype("int")
 #pred_test2=rd_model2.predict(x_test).astype("float64")
-pred_test2=(rd_model2.predict(x_test)> 0.80 ).astype("int")
-
+pred_test2=(rd_model2.predict(x_test)> 0.50 ).astype("int")
 pred_test2.shape #El modelo tiene una probabilidad mayor a 80% en todas las clases
 #pred_test2=np.any(pred_test2==1, axis=1)
 #pred_test2=np.argmax(pred_test2, axis=1)
@@ -141,4 +147,10 @@ disp=metrics.ConfusionMatrixDisplay(cm,display_labels=['no_tumor', 'tumor'])
 disp.plot()
 print(metrics.classification_report(y_test, pred_test2))
 
-
+plt.plot(m2.history['precision'])
+plt.plot(m2.history['val_precision'])
+plt.title('Precisión del modelo tuneado')
+plt.xlabel('Tiempo de entrenamiento - Epochs')
+plt.ylabel('Precisión')
+plt.legend(['train', 'val'])
+plt.show()

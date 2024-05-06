@@ -7,6 +7,7 @@ import pandas as pd
 ####instalar paquete !pip install keras-tuner
 import keras_tuner as kt
 from tensorflow.keras.utils import to_categorical
+from matplotlib import pyplot as plt #
 
 ### cargar bases_procesadas ####
 
@@ -47,20 +48,31 @@ model_cov.compile(loss="binary_crossentropy", optimizer="adam", metrics=["Recall
 #Entrenamiento
 model_cov.fit(x_train, y_train, batch_size=100, epochs=10, validation_data=(x_test, y_test))
 model_cov.summary()
+m3=model_cov.fit(x_train, y_train, batch_size=100, epochs=10, validation_data=(x_test, y_test))
+
+plt.plot(m3.history['Precision'])
+plt.plot(m3.history['val_Precision'])
+plt.title('Precisión del modelo RNC')
+plt.xlabel('Tiempo de entrenamiento - Epochs')
+plt.ylabel('Precisión')
+plt.legend(['train', 'val'])
+plt.show()
+
 
 #Evaluar el modelo
 test_loss, test_recall, test_precision, test_acc  = model_cov.evaluate(x_test, y_test, verbose=2)
-print("Test recall:", test_recall)
+print("Test recall:", test_precision)
 
 #evaluar algun porcentaje como filtro____pred_test=(rd_model.predict(x_test) > 0.50 ).astype("int")
-#pred_test=(model_cov.predict(x_test) > 0.20 ).astype("int")
+pred_test=(model_cov.predict(x_test) > 0.50 ).astype("int")
+pred_testt=(model_cov.predict(x_train) > 0.50 ).astype("int")
 #pred_test.shape #El modelo tiene una probabilidad mayor a 80% en todas las clases
 #Matriz de confusión
 #cm=metrics.confusion_matrix(y_test, pred_test)
 #disp=metrics.ConfusionMatrixDisplay(cm,display_labels=['no_tumor', 'tumor' ])
 #disp.plot()
-#print(metrics.classification_report(y_test, pred_test))
-
+print(metrics.classification_report(y_test, pred_test))
+print(metrics.classification_report(y_train, pred_testt))
 #Hay sobreajuste
 #Se le puede bajar el numero de filtros para disminuir el sobreajuste
 # o disminuir epochs o capas
@@ -70,7 +82,7 @@ print("Test recall:", test_recall)
 #Red convolucional con regularización
 
 #######probar una red con regulzarización L2
-reg_strength = 0.0001
+reg_strength = 0.001
 dropout_rate = 0.2
 learning_rate = 0.001
 
@@ -88,17 +100,26 @@ cnn_model2 = tf.keras.Sequential([
 ])
 opt=tf.keras.optimizers.Adam(learning_rate=learning_rate)
 # Compile the model with binary cross-entropy loss and Adam optimizer
-cnn_model2.compile(loss='binary_crossentropy', optimizer=opt, metrics=['AUC',"accuracy"])
+cnn_model2.compile(loss='binary_crossentropy', optimizer=opt, metrics=["Recall", "Precision", "accuracy"])
 
 # Train the model for 10 epochs
 cnn_model2.fit(x_train, y_train, batch_size=100, epochs=8, validation_data=(x_test, y_test))
+m4=cnn_model2.fit(x_train, y_train, batch_size=100, epochs=8, validation_data=(x_test, y_test))
+
+plt.plot(m4.history['Precision'])
+plt.plot(m4.history['val_Precision'])
+plt.title('Precisión del modelo RNC')
+plt.xlabel('Tiempo de entrenamiento - Epochs')
+plt.ylabel('Precisión')
+plt.legend(['train', 'val'])
+plt.show()
 
 #El modelo estuvo sensible a los nuevos hyperparametros
 #se van a tunear estos hiperparametros
 
 
 
-
+########################     NO FUNCIONA    ########################
 ##### función con definicion de hiperparámetros a afinar
 hp = kt.HyperParameters()
 def build_model(hp):
@@ -153,7 +174,6 @@ tuner = kt.RandomSearch(
     directory="my_dir",
     project_name="helloworld", 
 )
-
 
 tuner.search(x_train, y_train, epochs=4, validation_data=(x_test, y_test), batch_size=100)
 
