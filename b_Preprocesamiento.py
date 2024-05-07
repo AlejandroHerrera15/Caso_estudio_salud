@@ -1,10 +1,10 @@
 import numpy as np
 import cv2 ### para leer imagenes jpeg
 from matplotlib import pyplot as plt ## para gráfciar imágnes
-import _funciones as fn#### funciones personalizadas, carga de imágenes
+import a_funciones as fn#### funciones personalizadas, carga de imágenes
 import joblib ### para descargar array
 ##### ver ejemplo de imágenes cargadas ######
-img1 = cv2.imread('C://Users//Asus//Caso_estudio_salud//despliegue//image(1).jpg')
+img1 = cv2.imread('Data/Training/no_tumor/Tr-no_0011.jpg')
 ##### ver ejemplo de imágenes cargadas ######
 plt.imshow(img1)
 plt.title('no_tumor')
