@@ -1,1 +1,5 @@
-/salidas
+salidas/x_test.pkl
+salidas/y_test.pkl
+salidas/x_train.pkl
+salidas/y_train.pkl
+
