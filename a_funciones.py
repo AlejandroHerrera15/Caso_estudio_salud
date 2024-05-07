@@ -33,27 +33,39 @@ def img2data(path, width):
     return rawImgs, labels 
 
 
+import numpy as np
+import pandas as pd
+import cv2 ### para leer imagenes jpeg
+### pip install opencv-python
+import a_funciones as fn#### funciones personalizadas, carga de imágenes
+import tensorflow as tf
+import openpyxl
+
+import sys
+sys.executable
+sys.path
 ##funcion modificada
-def img3data(path, width=100):
+def img3data(path, width=120):
     
     rawImgs = []   #### una lista con el array que representa cada imágen
     labels = [] ### el label de cada imágen
-    
+    files_list1=[]
     list_labels = [path+f for f in listdir(path)] ### crea una lista de los archivos en la ruta (Normal /Pneumonia)
-
     for imagePath in ( list_labels): ### recorre cada carpeta de la ruta ingresada
-        
-        files_list=listdir(imagePath) ### crea una lista con todos los archivos
+        files_list=listdir(imagePath)
+        files_list1=files_list + files_list1
+        ### crea una lista con todos los archivos
         for item in tqdm(files_list): ### le pone contador a la lista: tqdm
-            file = join(imagePath, item) ## crea ruta del archivo
+            file = join(imagePath, item)
             if file[-1] =='g': ### verificar que se imágen extensión jpg o jpeg
                 img = cv2.imread(file) ### cargar archivo
                 img = cv2.cvtColor(img , cv2.COLOR_BGR2RGB) ### invierte el orden de los colores en el array para usar el más estándar RGB
                 img = cv2.resize(img ,(width,width)) ### cambia resolución de imágnenes
                 rawImgs.append(img) ###adiciona imágen al array final
                 l = imagePath.split('/')[2] ### identificar en qué carpeta está
-                if l == 'NORMAL':  ### verificar en qué carpeta está para asignar el label
+                if l == 'no tumor':  ### verificar en qué carpeta está para asignar el label
                     labels.append([0])
-                elif l == 'PNEUMONIA':
+                elif l == 'tumor':
                     labels.append([1])
-    return rawImgs, labels, files_list
+    return rawImgs, labels, files_list1
+
