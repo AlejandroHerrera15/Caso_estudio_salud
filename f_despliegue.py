@@ -13,8 +13,8 @@ sys.path
 if __name__=="__main__":
 
     #### cargar datos ####
-    path = 'c:/cod/LEA3_helath/data/despliegue/'
-    x, _, files= fn.img2data(path) #cargar datos de despliegue
+    path = 'C:\\Usuarios\\Asus\\Caso_estudio_salud\\despliegue\\'
+    x, _, files= fn.img3data(path) #cargar datos de despliegue
 
     x=np.array(x) ##imagenes a predecir
 

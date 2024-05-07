@@ -140,3 +140,7 @@ print(metrics.classification_report(y_test, pred_test4_2))
 cm=metrics.confusion_matrix(y_test,pred_test4_2, labels=[1,0])
 disp=metrics.ConfusionMatrixDisplay(cm,display_labels=['tumor', 'normal'])
 disp.plot()
+
+lista= ["tumor" if x > 0.90 else "no tumor" if x < 0.10 else "revision" for x in probabilidades4 ]
+clases, count= np.unique(lista, return_counts=True)
+count*100/np.sum(count)
