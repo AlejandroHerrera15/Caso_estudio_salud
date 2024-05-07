@@ -5,6 +5,7 @@ from tqdm import tqdm  ### para crear contador en un for para ver evolución
 from os.path import join ### para unir ruta con archivo 
 import cv2 ### para leer imagenes jpg
 
+#Funcion para la lectura de imagenes
 def img2data(path, width):
     
     rawImgs = []   #### una lista con el array que representa cada imágen
@@ -33,18 +34,7 @@ def img2data(path, width):
     return rawImgs, labels 
 
 
-import numpy as np
-import pandas as pd
-import cv2 ### para leer imagenes jpeg
-### pip install opencv-python
-import a_funciones as fn#### funciones personalizadas, carga de imágenes
-import tensorflow as tf
-import openpyxl
-
-import sys
-sys.executable
-sys.path
-##funcion modificada
+##funcion modificada par el despliegue
 def img3data(path, width=120):
     
     rawImgs = []   #### una lista con el array que representa cada imágen

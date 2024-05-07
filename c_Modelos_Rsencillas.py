@@ -1,6 +1,5 @@
 import numpy as np
 import joblib ### para cargar array
-########Paquetes para NN #########
 import tensorflow as tf
 from sklearn import metrics ### para analizar modelo
 from sklearn.ensemble import RandomForestClassifier  ### para analizar modelo
@@ -9,7 +8,6 @@ from sklearn.linear_model import LogisticRegression
 import cv2 ### para leer imagenes jpeg
 from matplotlib import pyplot as plt #
 from tensorflow.keras.utils import to_categorical
-
 
 #Carga de bases procesadas
 x_train = joblib.load('salidas\\x_train.pkl')
@@ -29,6 +27,7 @@ x_test /=255
 x_train.shape
 x_test.shape
 
+#Confimar numero de datos por imagen
 np.product(x_train[1].shape)
 
 #Validación valores unicos para la y
@@ -60,9 +59,9 @@ print(metrics.classification_report(y_train, preddtctrain))
 preddtctest=rf.predict(x_test1d)
 print(metrics.classification_report(y_test, preddtctest))
 
+#Los resultados se analizan en el informe
 
-
-
+#Ahora construimos una red neuronal full connected
 #Red neuronal simple
 rd_model=tf.keras.models.Sequential([
     tf.keras.layers.Flatten(input_shape=x_train.shape[1:]),
@@ -77,6 +76,8 @@ rd_model.compile(optimizer="adam", loss='binary_crossentropy', metrics=["accurac
 rd_model.fit(x_train, y_train, epochs=10, validation_data=(x_test, y_test))
 m1=rd_model.fit(x_train, y_train, epochs=10, validation_data=(x_test, y_test))
 m1
+
+#Grafico para observar sobreajuste
 plt.plot(m1.history['precision'])
 plt.plot(m1.history['val_precision'])
 plt.title('Precisión del modelo')
@@ -88,32 +89,24 @@ plt.show()
 #Evaluar el modelo
 test_loss, test_acc, test_recall, test_precision = rd_model.evaluate(x_test, y_test, verbose=2)
 print("Test recall:", test_recall)
-#Matriz de confusión
-#evaluar algun porcentaje como filtro____pred_test=(rd_model.predict(x_test) > 0.50 ).astype("int")
-pred_test=(rd_model.predict(x_test) > 0.50 ).astype("int")
-#pred_test=rd_model.predict(x_test)
-#pred_test.shape #El modelo tiene una probabilidad mayor a 80% en todas las clases
-pred_testt=(rd_model.predict(x_train) > 0.50 ).astype("int")
 
-#pred_test1=np.argmax(pred_test, axis=1)
-#y_test2=np.argmax(y_test1, axis=1)
+#Matriz de confusión para test 
+#evaluar algun porcentaje como filtro
+pred_test=(rd_model.predict(x_test) > 0.50 ).astype("int")
+#para train 
+pred_testt=(rd_model.predict(x_train) > 0.50 ).astype("int")
 
 cm=metrics.confusion_matrix(y_test, pred_test)
 disp=metrics.ConfusionMatrixDisplay(cm,display_labels=['no_tumor', 'tumor'])
 disp.plot()
-print(metrics.classification_report(y_test, pred_test))
-print(metrics.classification_report(y_train, pred_testt))
+#metricas
+print(metrics.classification_report(y_test, pred_test)) #metricas para test
+print(metrics.classification_report(y_train, pred_testt)) #metricas para train
 #Guardar modelo
 rd_model.save('path_to_my_model.h5') 
 
-#filtrar la probabilidad
-# unir a dos categorias
-
-
-
-
-#Regularizar
-fuerza=0.003
+#Por la presencia de sobreajuste se propone regualarizar la red neuronal
+fuerza=0.003 
 dropout_rate = 0.2
 rd_model2=tf.keras.models.Sequential([
     tf.keras.layers.Flatten(input_shape=x_train.shape[1:]),
@@ -133,20 +126,19 @@ m2=rd_model2.fit(x_train, y_train, epochs=10, validation_data=(x_test, y_test))
 test_loss, test_acc, test_recall, test_precision = rd_model2.evaluate(x_test, y_test, verbose=2)
 print("Test recall:", test_recall)
 
-#pred_test2=rd_model2.predict(x_test)
-##IMPORTANTE SI TIRO EL TRESHOLD COMO HAGO PARA QUE EL
-#evaluar algun porcentaje como filtro____pred_test=(rd_model.predict(x_test) > 0.50 ).astype("int")
-#pred_test2=rd_model2.predict(x_test).astype("float64")
+#evaluar algun porcentaje como filtro y matriz de confusion
 pred_test2=(rd_model2.predict(x_test)> 0.50 ).astype("int")
-pred_test2.shape #El modelo tiene una probabilidad mayor a 80% en todas las clases
-#pred_test2=np.any(pred_test2==1, axis=1)
-#pred_test2=np.argmax(pred_test2, axis=1)
-
+#para train 
+pred_testt2=(rd_model.predict(x_train) > 0.50 ).astype("int")
 cm=metrics.confusion_matrix(y_test, pred_test2)
 disp=metrics.ConfusionMatrixDisplay(cm,display_labels=['no_tumor', 'tumor'])
 disp.plot()
-print(metrics.classification_report(y_test, pred_test2))
 
+#metricas para test y train
+print(metrics.classification_report(y_test, pred_test2))
+print(metrics.classification_report(y_train, pred_testt2))
+
+#Grafico de sobreajuste
 plt.plot(m2.history['precision'])
 plt.plot(m2.history['val_precision'])
 plt.title('Precisión del modelo tuneado')
